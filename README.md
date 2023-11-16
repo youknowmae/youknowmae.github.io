@@ -1,2 +1,1 @@
-# youknowmae.github.io
-Creating a simple real-time chat-app using python sockets and tkinter.
+# Creating a simple real-time chat-app using python sockets and tkinter.
