@@ -19,7 +19,4 @@ Imagine a server as a waiter in a restaurant and a client as a customer. The wai
 
 In the context of computers, the server is similar to the waiter, offering a service, and the client is akin to the customer, making requests to the server. Sockets act as the language through which the waiter and customer communicate – a shared understanding. The waiter remains attentive for requests (listens for customers), and upon a customer's arrival (when the client connects), they communicate to fulfill the customer's needs (whether it's data or a service). Following that, the customer departs (the connection is closed). Various guidelines (protocols like TCP or UDP) ensure a seamless conversation.
 
-## **UDP** ##
-
-If you are creating a real time chat application the protocol that you should use is the UDP **(User Datagram Protocol)**. 
 
