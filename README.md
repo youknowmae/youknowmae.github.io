@@ -82,7 +82,15 @@ def handle(client):
 ```
 Since a chat app should be able to handle huge amount of clients, we should use *list* to store each client connected to the server, as well as their respective nicknames. Below the clients and nicknames list you can see the *broadcast* function which iterate through all connected clients in the clients list and sends a given message to each of them. The message is sent using the *send* method of the client's socket.
 
-Of course our chat application should be able to continuously receive messages from the client that's why I used *while True* to run an infinite loop. Inside the loop we should use *client.recv(1024).decode('utf-8')* to attempt to receive a message from the client
+Of course our chat application should be able to continuously receive messages from the client that's why I used *while True* to run an infinite loop. Inside the loop we should use *client.recv(1024).decode('utf-8')* to attempt to receive a message from the client. If the message received from the client is "*{quit}*", it will break out of the loop, indicating that the client wants to leave the chat room.
+
+Now, to obtain the client's nickname I used *nicknames[clients.index(client)]* which is based on the client's index in the client's list.
+
+We cannot exclude how the message should be broadcast across the clients, that's why we have to call the *broadcast* function to send the message to all clients in this kind of format *"{nickname}: {message}"*
+
+The last code which is *except* handles the situation where the client might be disconnected unexpectedly by removing the client and its nickname from the respective lists and broadcasting the message that the client has left the chat. So then the loop is exited with *break*
+
+We now have come to the last set of codes before proceeding to the client's code. this code establishes a continuous loop to accept incoming client connections
 ```
 while True:
     client, address = server.accept()
@@ -99,9 +107,20 @@ while True:
     thread = threading.Thread(target=handle, args=(client,))
     thread.start()
 ```
+Again you can see that I used while loop so the server will continuously wait for and handle incoming client connections. ***client, address = server.accept()***, in this code you can see the *accept()* method so that the server will for a new client to connect. A method returns new socket *'client'* representing the connection and the client's address *'address'* when a client connects.
 
-client
+To receive nickname from the newly connected client we have to use *client.recv(1024).decode('utf-8')* to receive and decode the message. The received nickname is added to the nicknames list, and the client's socket is added to the clients list. These lists are presumably used to keep track of connected clients and their nicknames.
 
+Of course, the client needs a welcome message so that the other clients will be notify that a new client have joined the chat, and to do that we should use the broadcast function in order for the other clients to see the newcomer.
+
+To handle communication with the newly connected client concurrently with other clients, a new thread is created using *threading.Thread*. It is given the handle function as the target, which manages communication with individual clients. The thread is started using *thread.start()*, allowing the server to handle multiple client connections simultaneously.
+
+## Client Code ##
+Now that we're done with the server's code, we can now proceed to the next sets of codes from the client's side.
+
+This side is where you'll be able to know how I used Tkinter for my GUI of this application.
+
+For the first set of codes:
 ```
 import socket
 import tkinter as tk
@@ -116,6 +135,9 @@ PORT = 5055
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((HOST, PORT))
 ```
+In this code you can see that it's just the same from the server code, but this time I have imported *tkinter* for the GUI of the application. 
+
+You can also see that I used *client.connect((HOST, PORT))* instead of *.bind()*.  This code establishes a connection to the server using the specified host (IP address) and port. This assumes that a server is running on the specified host and port.
 
 ```
 # Function to send messages
@@ -137,7 +159,15 @@ def get_nickname():
     # Show the main window after getting the nickname
     root.deiconify()
 ```
+The first def function is to give the client's ability to send message on the input field by pressing the *Enter* key or just by simply clicking the send button. So It retrieves the message entered by the user from the input field *my_msg.get()*, clears the input field *my_msg.set("")*, and sends the message to the server using the client.send method. The message is encoded in UTF-8 before being sent.
 
+When you're done talking or want to leave the chat room *on_closing* function is called when the client closes the application. It sets the message to "{quit}" using my_msg.set("{quit}") and then calls the send_message function to send this quit message to the server. This mechanism allows the server to recognize that the client is quitting.
+
+Since you need a nickname to use the chat app I used *get_nickname* function where it ask the user to enter their nickname using *simpledialog.askstring*. The entered nickname is then sent to the server using client.send after encoding it in UTF-8. 
+
+After getting the nickname of the user, the window will disappear and the main window which is the root will be visible using *root.deiconify()*.
+
+After this def functions we need to set up the GUI of our chat app
 ```
 # Tkinter setup
 root = tk.Tk()
@@ -201,3 +231,20 @@ receive_thread.start()
 # Run the Tkinter main loop
 root.mainloop()
 ```
+This set of codes allows users to enter their nickname, send messages, and receive messages in real-time. It also ensures that the application can be closed gracefully. The GUI components are updated based on user interactions and incoming messages from the server.
+
+But, as you can see in the above code def receive is different from the others since its function continuously listens for incoming messages from the server in a separate thread. When a message is received, it is displayed in the chat area, and the display is updated to show the latest message. If the received message is "{quit}", indicating that the server has closed the connection, the loop is exited.
+
+*receive_thread* is created to run the *receive* function concurrently since it is continuously listens for incoming messages that the server will broadcast across all the clients connected to the server.
+
+I didn't explain the tkinter any further since the explanation is in the code already, and it is easy to understand than CSS.
+
+## We have come to an end ##
+
+***To sum it up***, creating a real-time chat app using Python sockets and Tkinter has given us a good understanding of how networks and user interfaces work together. We used sockets to make sure messages flow smoothly between users and a server, and Tkinter helped make the chat app easy to use and nice to look at.
+
+Building this chat app not only helped us get better at programming but also showed us how to manage multiple things happening at the same time using threading. From setting up how messages travel to designing how it all looks, each step taught us something important.
+
+As we finish this journey, remember that we've just started. There are lots of ways to make chat apps even better – adding cool features, making it more secure, or trying out different tools. What we've learned here is a strong base for more adventures in making real-time communication apps.
+
+I hope this chat app adventure sparked your interest and gave you the tools to explore more about how networks and programs talk to each other. Enjoy your coding journey!
