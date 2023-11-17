@@ -79,7 +79,7 @@ def handle(client):
             nicknames.remove(nickname)
             break
 ```
-
+After we finished 
 ```
 while True:
     client, address = server.accept()
