@@ -51,6 +51,7 @@ The **bind** method is utilized on the server socket to link it with a particula
 
 The **listen** method is invoked on the server socket, making it a listening socket. This prepares the server to accept incoming client connections. Without this step, the server wouldn't be ready to receive connection requests.
 
+After we finished setting up TCP server we can now start creating functions to manage a basic chat server. To do that here's the code:
 ```
 clients = []
 nicknames = []
@@ -79,7 +80,9 @@ def handle(client):
             nicknames.remove(nickname)
             break
 ```
-After we finished 
+Since a chat app should be able to handle huge amount of clients, we should use *list* to store each client connected to the server, as well as their respective nicknames. Below the clients and nicknames list you can see the *broadcast* function which iterate through all connected clients in the clients list and sends a given message to each of them. The message is sent using the *send* method of the client's socket.
+
+Of course our chat application should be able to continuously receive messages from the client that's why I used *while True* to run an infinite loop. Inside the loop we should use *client.recv(1024).decode('utf-8')* to attempt to receive a message from the client
 ```
 while True:
     client, address = server.accept()
