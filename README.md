@@ -19,6 +19,9 @@ Imagine a server as a waiter in a restaurant and a client as a customer. The wai
 In the context of computers, the server is similar to the waiter, offering a service, and the client is akin to the customer, making requests to the server. Sockets act as the language through which the waiter and customer communicate – a shared understanding. The waiter remains attentive for requests (listens for customers), and upon a customer's arrival (when the client connects), they communicate to fulfill the customer's needs (whether it's data or a service). Following that, the customer departs (the connection is closed). Various guidelines (protocols like TCP or UDP) ensure a seamless conversation.
 
 **TCP and UDP**
+
+![picture alt]()
+
 TCP or Transmission Control Protocol is a connection-oriented protocol that ensures the reliability and an ordered data delivery making it suitable for applications prioritizing data integrity like file transfers. If you're going to use TCP, you have to create a socket using *socket.socket()*, and specifying the socket type by using *socket.SOCK_STREAM*.
 
 On the other hand, UDP or User Diagram Protocol is a connectionless protocol that focuses on speed more than reliability. This type of socket is used in real-time application like gaming and streaming. 
